@@ -18,8 +18,7 @@ jobs:
     if: github.event.label.name == 'start_tests' || github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
-      runner-matrix: ${{ steps.set-matrix.outputs.runner-matrix }}
-      version-matrix: ${{ steps.set-matrix.outputs.version-matrix }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
       - name: Get TONOS SE Releases and Set matrix
@@ -33,8 +32,14 @@ jobs:
 
             const tonosReleaseTags = tonosReleases.map(release=>release.tag_name);
             const binReleaseTags = binReleases.map(release=>release.tag_name);
+            const newReleases = tonosReleaseTags.filter(r=>!binReleaseTags.includes(r));
 
-            core.info(tonosReleaseTags.filter(r=>!binReleaseTags.includes(r)));
+            var include = [];
+            runners.forEach(runner=>{
+              newReleases.forEach(release=>{
+                include.push({'runs-on': runner, 'release': release});
+              })
+            });
 
-            core.setOutput('runner-matrix', JSON.stringify({include: runners.map(runner=>({'runs-on': runner}))}));
-            core.setOutput('tonos-se-version', 'asdfasdfasdf');
+            core.info(JSON.stringify({include}));
+            core.setOutput('matrix', JSON.stringify({include}));
