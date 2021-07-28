@@ -17,8 +17,8 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.runners-releases-matrix }}
-      matrix: ${{ steps.set-matrix.outputs.releases-matrix }}      
+      runners-releases-matrix: ${{ steps.set-matrix.outputs.runners-releases-matrix }}
+      releases-matrix: ${{ steps.set-matrix.outputs.releases-matrix }}      
     steps:
       - uses: actions/checkout@v2
       - name: Get TONOS SE Releases and Set matrix
