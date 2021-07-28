@@ -126,5 +126,5 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: "./ton-node-*.tar.gz*"
           commit: ${{ github.sha }}
-          tag: ${{ needs.prepare.outputs.release-tag }}
+          tag: ${{ matrix.release }}
           token: ${{ github.token }}
