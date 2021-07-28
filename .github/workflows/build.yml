@@ -34,7 +34,7 @@ jobs:
             const tonosReleaseTags = tonosReleases.map(release=>release.tag_name);
             const binReleaseTags = binReleases.map(release=>release.tag_name);
 
-            core.info(tonosReleaseTags.filter(r=>binReleaseTags.includes(r)));
+            core.info(tonosReleaseTags.filter(r=>!binReleaseTags.includes(r)));
 
             core.setOutput('runner-matrix', JSON.stringify({include: runners.map(runner=>({'runs-on': runner}))}));
             core.setOutput('tonos-se-version', 'asdfasdfasdf');
