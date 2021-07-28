@@ -28,8 +28,8 @@ jobs:
         with:
           script: |
             const runners = ['ubuntu-18.04', 'macos-10.15', 'windows-2019'];
-            console.log("github: ${{ toJson(github) }}"")
-            console.log("event: ${{ toJson(github.event) }}"")            
+            core.info('github: ${{ toJson(github) }}')
+            core.info('event: ${{ toJson(github.event) }}')            
             
             const { data: tonosReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
             const { data: binReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
