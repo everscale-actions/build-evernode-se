@@ -83,12 +83,12 @@ jobs:
         run: |
           mkdir -p ton-node
           if [[ "${{ runner.os }}" == 'Windows' ]]; then
-            cp ton-node-se/target/release/ton_node_startup.exe ton-node
+            cp ton-node-se/target/release/ton_node_startup.exe ton-node/
           else
-            cp ton-node-se/target/release/ton_node_startup ton-node
+            cp ton-node-se/target/release/ton_node_startup ton-node/
             chmod +x ton-node/ton_node_startup
           fi
-          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar ton-node
+          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar -C ton-node *
           gzip -1 ton-node-${{ runner.os }}-${{ matrix.release }}.tar
 
       - name: 📚 Publish artifact
