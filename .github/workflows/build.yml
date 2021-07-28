@@ -72,11 +72,11 @@ jobs:
           cargo --version
           rustc --version
           # cargo build --release
-          mkdir -p ton-node-se/target/release
+          mkdir -p target/release
           if [[ "${{ runner.os }}" == 'Windows' ]]; then            
-            echo "test" > ton-node-se/target/release/ton_node_startup.exe
+            echo "test" > target/release/ton_node_startup.exe
           else
-            echo "test" > ton-node-se/target/release/ton_node_startup
+            echo "test" > target/release/ton_node_startup
           fi
 
       - name: 🔨 TAR node binaries
