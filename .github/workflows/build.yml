@@ -44,10 +44,12 @@ jobs:
               })
             });
 
+            core.info(JSON.stringify({include}));
+
             core.setOutput('runners-releases-matrix', JSON.stringify({include}));
             core.setOutput('releases-matrix', JSON.stringify({include: newReleases.map(release=>({'release': release}))}));
   build:
-    if: ${{ needs.prepare.outputs.runners-releases-matrix != '[]' }}
+    if: ${{ needs.prepare.outputs.runners-releases-matrix != '{"include":[]}' }}
     needs: prepare
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.runners-releases-matrix) }}
