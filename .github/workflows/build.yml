@@ -18,7 +18,8 @@ jobs:
     if: github.event.label.name == 'start_tests' || github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.set-matrix.outputs.runners-releases-matrix }}
+      matrix: ${{ steps.set-matrix.outputs.releases-matrix }}      
     steps:
       - uses: actions/checkout@v2
       - name: Get TONOS SE Releases and Set matrix
@@ -42,4 +43,7 @@ jobs:
             });
 
             core.info(JSON.stringify({include}));
-            core.setOutput('matrix', JSON.stringify({include}));
+            core.info(JSON.stringify({newReleases}));
+
+            core.setOutput('runners-releases-matrix', JSON.stringify({include}));
+            core.setOutput('releases-matrix', JSON.stringify({newReleases}));
