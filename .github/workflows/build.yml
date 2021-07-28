@@ -31,8 +31,10 @@ jobs:
             const { data: tonosReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
             const { data: binReleases } = await github.repos.listReleases({owner: '${{ github.repository_owner }}', repo: '${{ github.repository }}'.split('/')[1]});
 
-            core.info(tonosReleases);
-            core.info(binReleases);            
+            const tonosReleaseTags = tonosReleases.map(release=>release.tag_name);
+            const binReleaseTags = binReleases.map(release=>release.tag_name);
+
+            core.info(tonosReleaseTags.filter(r=>binReleaseTags.includes(r)));
 
             core.setOutput('runner-matrix', JSON.stringify({include: runners.map(runner=>({'runs-on': runner}))}));
             core.setOutput('tonos-se-version', 'asdfasdfasdf');
