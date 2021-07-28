@@ -88,7 +88,7 @@ jobs:
             cp ton-node-se/target/release/ton_node_startup ton-node/
             chmod +x ton-node/ton_node_startup
           fi
-          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar -C ton-node *
+          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar -C ton-node .
           gzip -1 ton-node-${{ runner.os }}-${{ matrix.release }}.tar
 
       - name: 📚 Publish artifact
