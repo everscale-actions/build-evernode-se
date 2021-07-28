@@ -27,8 +27,8 @@ jobs:
         with:
           script: |
             const runners = ['ubuntu-18.04', 'macos-10.15', 'windows-2019'];
-            # const { data: tonosReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
-            tonosReleases = ['0.28.6']
+            // const { data: tonosReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
+            const tonosReleases = ['0.28.6']
             const { data: binReleases } = await github.repos.listReleases({owner: '${{ github.repository_owner }}', repo: '${{ github.repository }}'.split('/')[1]});
 
             const tonosReleaseTags = tonosReleases.map(release=>release.tag_name);
@@ -72,13 +72,7 @@ jobs:
         run: |
           cargo --version
           rustc --version
-          # cargo build --release
-          mkdir -p target/release
-          if [[ "${{ runner.os }}" == 'Windows' ]]; then            
-            echo "test" > target/release/ton_node_startup.exe
-          else
-            echo "test" > target/release/ton_node_startup
-          fi
+          cargo build --release          
 
       - name: 🔨 TAR node binaries
         run: |
