@@ -72,8 +72,8 @@ jobs:
           cargo --version
           rustc --version
           # cargo build --release
-          if [[ "${{ runner.os }}" == 'Windows' ]]; then
-            mkdir -p
+          mkdir -p ton-node-se/target/release
+          if [[ "${{ runner.os }}" == 'Windows' ]]; then            
             touch ton-node-se/target/release/ton_node_startup.exe
           else
             touch ton-node-se/target/release/ton_node_startup
