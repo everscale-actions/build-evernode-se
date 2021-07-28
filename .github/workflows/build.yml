@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       runners-releases-matrix: ${{ steps.set-matrix.outputs.runners-releases-matrix }}
-      releases-matrix: ${{ steps.set-matrix.outputs.releases-matrix }}      
+      releases-matrix: ${{ steps.set-matrix.outputs.releases-matrix }}
     steps:
       - uses: actions/checkout@v2
       - name: Get TONOS SE Releases and Set matrix
@@ -27,7 +27,8 @@ jobs:
         with:
           script: |
             const runners = ['ubuntu-18.04', 'macos-10.15', 'windows-2019'];
-            const { data: tonosReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
+            # const { data: tonosReleases } = await github.repos.listReleases({owner: '${{ env.TONOS_SE_REPO_OWNER }}', repo: '${{ env.TONOS_SE_REPO_NAME }}'});
+            tonosReleases = ['0.28.6']
             const { data: binReleases } = await github.repos.listReleases({owner: '${{ github.repository_owner }}', repo: '${{ github.repository }}'.split('/')[1]});
 
             const tonosReleaseTags = tonosReleases.map(release=>release.tag_name);
@@ -63,7 +64,7 @@ jobs:
             ~/.cargo/git
           key: ${{ matrix.runs-on }}-cargoregistry-${{ hashFiles('ton-node-se/**/Cargo.toml') }}
           restore-keys: ${{ matrix.runs-on }}-cargoregistry-
-          
+
       - name: 🔨 Build
         working-directory: ton-node-se
         env:
@@ -88,7 +89,7 @@ jobs:
             cp ton-node-se/target/release/ton_node_startup ton-node/
             chmod +x ton-node/ton_node_startup
           fi
-          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar -C ton-node .
+          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar ton-node/
           gzip -1 ton-node-${{ runner.os }}-${{ matrix.release }}.tar
 
       - name: 📚 Publish artifact
@@ -96,7 +97,7 @@ jobs:
         with:
           name: ton-node-${{ runner.os }}-${{ matrix.release }}
           path: ton-node-${{ runner.os }}-${{ matrix.release }}.tar.gz
-          if-no-files-found: error  
+          if-no-files-found: error
 
   publish-release:
     needs:
@@ -104,7 +105,7 @@ jobs:
       - build
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJSON(needs.prepare.outputs.releases-matrix) }}    
+      matrix: ${{ fromJSON(needs.prepare.outputs.releases-matrix) }}
     steps:
       - name: 🎣 Download Linux artifact
         uses: actions/download-artifact@v2
