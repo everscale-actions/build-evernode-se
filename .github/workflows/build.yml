@@ -77,7 +77,6 @@ jobs:
             touch ton-node-se/target/release/ton_node_startup.exe
           else
             touch ton-node-se/target/release/ton_node_startup
-            chmod +x ton-node/ton_node_startup
           fi
 
       - name: 🔨 TAR node binaries
