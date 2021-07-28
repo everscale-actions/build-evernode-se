@@ -15,7 +15,6 @@ defaults:
 
 jobs:
   prepare:
-    if: github.event.label.name == 'start_tests' || github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.runners-releases-matrix }}
@@ -46,4 +45,92 @@ jobs:
             core.info(JSON.stringify({newReleases}));
 
             core.setOutput('runners-releases-matrix', JSON.stringify({include}));
-            core.setOutput('releases-matrix', JSON.stringify({newReleases}));
+            core.setOutput('releases-matrix', JSON.stringify({include: newReleases.map(release=>({'release': release}))}));
+  build:
+    needs: prepare
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.runners-releases-matrix) }}
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - name: Checkout tonos-se
+        uses: actions/checkout@v2
+        with:
+          repository: "${{ env.TONOS_SE_REPO_OWNER }}/${{ env.TONOS_SE_REPO_NAME }}"
+          ref: ${{ matrix.release }}
+
+      - name: ⚡ Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ matrix.runs-on }}-cargoregistry-${{ hashFiles('ton-node-se/**/Cargo.toml') }}
+          restore-keys: ${{ matrix.runs-on }}-cargoregistry-
+          
+      - name: 🔨 Build
+        working-directory: ton-node-se
+        env:
+          CARGO_TERM_COLOR: always
+        run: |
+          cargo --version
+          rustc --version
+          # cargo build --release
+          if [[ "${{ runner.os }}" == 'Windows' ]]; then
+            touch ton-node-se/target/release/ton_node_startup.exe
+          else
+            touch ton-node-se/target/release/ton_node_startup
+            chmod +x ton-node/ton_node_startup
+          fi
+
+      - name: 🔨 TAR node binaries
+        run: |
+          mkdir -p ton-node
+          if [[ "${{ runner.os }}" == 'Windows' ]]; then
+            cp ton-node-se/target/release/ton_node_startup.exe ton-node
+          else
+            cp ton-node-se/target/release/ton_node_startup ton-node
+            chmod +x ton-node/ton_node_startup
+          fi
+          tar -cvf ton-node-${{ runner.os }}-${{ matrix.release }}.tar ton-node
+          gzip -1 ton-node-${{ runner.os }}-${{ matrix.release }}.tar
+
+      - name: 📚 Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ton-node-${{ runner.os }}-${{ matrix.release }}
+          path: ton-node-${{ runner.os }}-${{ matrix.release }}.tar.gz
+          if-no-files-found: error  
+
+  publish-release:
+    needs:
+      - prepare
+      - build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.releases-matrix) }}    
+    steps:
+      - name: 🎣 Download Linux artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ton-node-Linux-${{ matrix.release }}
+
+      - name: 🎣 Download Windows artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ton-node-Windows-${{ matrix.release }}
+
+      - name: 🎣 Download macOS artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ton-node-macOS-${{ matrix.release }}
+
+      - name: Release
+        id: release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: "./ton-node-*.tar.gz*"
+          commit: ${{ github.sha }}
+          tag: ${{ needs.prepare.outputs.release-tag }}
+          token: ${{ github.token }}
