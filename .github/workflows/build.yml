@@ -1,5 +1,7 @@
 name: Build TON OS SE binaries
 
+concurrency: "concurrency"
+
 on:
   push:
     branches:
