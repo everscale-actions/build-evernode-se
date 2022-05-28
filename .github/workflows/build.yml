@@ -83,7 +83,6 @@ jobs:
           cargo build --release
 
       - name: 🔨 Tar Gzip node binaries
-        if: ${{ runner.os == 'Windows' }}
         run: |
           if [[ "${{ runner.os }}" == 'Windows' ]]; then
             binFile=ton_node_startup.exe
@@ -91,7 +90,7 @@ jobs:
             chmod +x ton-node-se/target/release/ton_node_startup
             binFile=ton_node_startup
           fi
-          tar -cvfz evernode-se-${{ runner.os }}-${{ matrix.release }}.tar -C ton-node-se/target/release/ $binFile
+          tar -czvf evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz -C ton-node-se/target/release/ $binFile
 
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
