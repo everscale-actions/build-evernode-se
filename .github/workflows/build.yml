@@ -74,7 +74,7 @@ jobs:
           restore-keys: ${{ matrix.runs-on }}-cargoregistry-
 
       - name: 🔨 Build
-        working-directory: ton-node-se
+        working-directory: node
         env:
           CARGO_TERM_COLOR: always
         run: |
@@ -87,10 +87,10 @@ jobs:
           if [[ "${{ runner.os }}" == 'Windows' ]]; then
             binFile=ton_node_startup.exe
           else
-            chmod +x ton-node-se/target/release/ton_node_startup
+            chmod +x node/target/release/ton_node_startup
             binFile=ton_node_startup
           fi
-          tar -czvf evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz -C ton-node-se/target/release/ $binFile
+          tar -czvf evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz -C node/target/release/ $binFile
 
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v2
