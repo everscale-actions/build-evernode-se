@@ -25,10 +25,10 @@ jobs:
       runners-releases-matrix: ${{ steps.set-matrix.outputs.runners-releases-matrix }}
       releases-matrix: ${{ steps.set-matrix.outputs.releases-matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get EVERNODE SE Releases and Set matrix
         id: set-matrix
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           script: |
             const runners = ['ubuntu-18.04', 'macos-10.15', 'windows-2019'];
@@ -43,7 +43,7 @@ jobs:
             var include = [];
             runners.forEach(runner=>{
               newReleases.forEach(release=>{
-                include.push({'runs-on': runner, 'release': release, 'dir': dir});
+                include.push({'runs-on': runner, 'release': release, 'dir': "node"});
               })
             });
 
@@ -59,13 +59,13 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Checkout evernode-se
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: "${{ env.EVERNODE_SE_REPO_OWNER }}/${{ env.EVERNODE_SE_REPO_NAME }}"
           ref: ${{ matrix.release }}
 
       - name: ⚡ Cache cargo
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -75,7 +75,7 @@ jobs:
 
       - name: 🔨 Build
         uses: actions-rs/cargo@v1
-        with:                   
+        with:
           command: build
           args: --release --manifest-path ${{ matrix.dir }}/Cargo.toml
 
@@ -90,7 +90,7 @@ jobs:
           tar -czvf evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz -C node/target/release/ $binFile
 
       - name: 📚 Publish artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: evernode-se-${{ runner.os }}-${{ matrix.release }}
           path: evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz
@@ -105,17 +105,17 @@ jobs:
       matrix: ${{ fromJSON(needs.prepare.outputs.releases-matrix) }}
     steps:
       - name: 🎣 Download Linux artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: evernode-se-Linux-${{ matrix.release }}
 
       - name: 🎣 Download Windows artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: evernode-se-Windows-${{ matrix.release }}
 
       - name: 🎣 Download macOS artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: evernode-se-macOS-${{ matrix.release }}
 
