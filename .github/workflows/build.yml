@@ -73,6 +73,19 @@ jobs:
           key: ${{ matrix.runs-on }}-cargoregistry-${{ hashFiles('ton-node-se/**/Cargo.toml') }}
           restore-keys: ${{ matrix.runs-on }}-cargoregistry-
 
+      - name: Install latest rust toolchain
+        id: toolchain-install
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            override: true
+
+      - run: |
+          echo "rustc: {{ steps.toolchain-install.outputs.rustc  }}"
+          echo "rustc_hash: {{ steps.toolchain-install.outputs.rustc_hash  }}"
+          echo "cargo: {{ steps.toolchain-install.outputs.cargo  }}"
+          echo "rustup: {{ steps.toolchain-install.outputs.rustup  }}"
+
       - name: 🔨 Build
         uses: actions-rs/cargo@v1
         with:
@@ -124,8 +137,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifactErrorsFailBuild: true
-          artifacts: "./evernode-se-*.tar.gz*"
+
           commit: ${{ github.sha }}
           tag: ${{ matrix.release }}
           token: ${{ github.token }}
