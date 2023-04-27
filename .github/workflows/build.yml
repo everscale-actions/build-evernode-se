@@ -96,12 +96,12 @@ jobs:
       - name: 🔨 Tar Gzip node binaries
         run: |
           if [[ "${{ runner.os }}" == 'Windows' ]]; then
-            binFile=ton_node_startup.exe
+            binFile=evernode_se.exe
           else
-            chmod +x target/release/ton_node_startup
-            binFile=ton_node_startup
+            chmod +x target/release/evernode_se
+            binFile=evernode_se
           fi
-          tar -czvf evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz -C target/release/ $binFile
+          tar -czvf evernode-se-${{ runner.os }}-${{ matrix.release }}.tar.gz -C target/release/  $binFile
 
       - name: 📚 Publish artifact
         uses: actions/upload-artifact@v3
