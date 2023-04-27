@@ -70,7 +70,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ matrix.runs-on }}-cargoregistry-${{ hashFiles('ton-node-se/**/Cargo.toml') }}
+          key: ${{ matrix.runs-on }}-cargoregistry-${{ hashFiles('node/**/Cargo.toml') }}
           restore-keys: ${{ matrix.runs-on }}-cargoregistry-
 
       - name: Install latest rust toolchain
@@ -91,7 +91,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
+          args: --release --package evernode_se
 
       - name: 🔨 Tar Gzip node binaries
         run: |
