@@ -31,7 +31,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const runners = ['ubuntu-18.04', 'macos-10.15', 'windows-2019'];
+            const runners = ['ubuntu-20.04', 'macos-10.15', 'windows-2019'];
             const { data: evernodeReleases } = await github.rest.repos.listReleases({owner: '${{ env.EVERNODE_SE_REPO_OWNER }}', repo: '${{ env.EVERNODE_SE_REPO_NAME }}'});
             const evernodeReleaseTags = evernodeReleases.map(release=>release.tag_name).filter(r => r >= '0.31.0');            
 
